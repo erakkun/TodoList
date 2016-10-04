@@ -1,0 +1,68 @@
+<%= render 'start' %>
+
+<%= render 'addnew' %>
+
+<ul class="nav nav-tabs">
+  <li role="presentation" class="active">
+    <%= link_to 'All', tasks_path() %>
+  </li>
+
+  <% @tasktypes.each do |tasktype| %>
+      <li role="presentation">
+        <%= link_to "#{tasktype.title}", tasks_path(tasktype) %>
+      </li>
+  <% end %>
+</ul>
+
+<ul class="list-group">
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-lg-2">
+        <strong>Status</strong>
+      </div>
+      <div class="col-lg-4">
+        <strong>Title</strong>
+      </div>
+      <div class="col-lg-3">
+        <strong>Deadline</strong>
+      </div>
+      <div class="col-lg-3">
+        <strong>Actions</strong>
+      </div>
+     </div>
+   </li>
+
+  <% @tasks.each do |task| %>
+    <li class="list-group-item task" id="<%= task.id %>">
+      <div class="row">
+        <%= form_for :task, url: tasks_path do |f|  %>
+          <div class="col-lg-2 task-list">
+            <%= task.task_type.title %>
+          </div>
+          <div class="col-lg-2 task-edit">
+            <%= f.collection_select :task_type_id, TaskType.all, :id, :title, :include_blank => false %>
+          </div>
+          <div class="col-lg-4 task-list">
+            <%= task.title %>
+          </div>
+          <div class="col-lg-4 task-edit">
+            <%= f.text_field :title %>
+          </div>
+          <div class="col-lg-3 task-list">
+            <%= task.deadline %>
+          </div>
+          <div class="col-lg-3 task-edit">
+            <%= f.date_select :deadline %>
+          </div>
+          <div class="col-lg-3 task-list">
+            <button class="edit-button" type="button">Edit</button>
+          </div>
+          <div class="col-lg-3 task-edit">
+            <%= f.submit %>
+            <button class="edit-button" type="button">Cancel</button>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>
