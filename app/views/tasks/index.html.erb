@@ -3,8 +3,8 @@
 <%= render 'addnew' %>
 
 <ul class="nav nav-tabs">
-  <li role="presentation" class="active">
-    <%= link_to 'All', tasks_path() %>
+  <li role="presentation">
+    <%= link_to 'All', tasks_path %>
   </li>
 
   <% @tasktypes.each do |tasktype| %>
@@ -34,32 +34,44 @@
 
   <% @tasks.each do |task| %>
     <li class="list-group-item task" id="<%= task.id %>">
-      <div class="row">
-        <%= form_for :task, url: tasks_path do |f|  %>
-          <div class="col-lg-2 task-list">
-            <%= task.task_type.title %>
+      <div class="row task-list" style="display: block;">
+        <div class="col-lg-2">
+          <%= task.task_type.title %>
+        </div>
+        <div class="col-lg-4">
+          <%= task.title %>
+        </div>
+        <div class="col-lg-3">
+          <% if !task.deadline.nil? %>
+            <%= task.deadline.to_time.strftime("%Y %B %d") %>
+            <% else %>
+            -
+          <% end %>
+        </div>
+        <div class="col-lg-3">
+          <button class="edit-button btn btn-default" type="button" style="float: left;">Edit</button>
+          <div style="width: auto; float:left;">
+            <%= button_to 'Destroy', task_path(task),
+                        method: :delete,
+                        data: { confirm: 'Are you sure?' },
+                        :class => "btn btn-default" %>
           </div>
-          <div class="col-lg-2 task-edit">
+        </div>
+      </div>
+      <div class="row task-edit" style="display: none;">
+        <%= form_for task, url: task_path(task), method: :patch do |f|  %>
+          <div class="col-lg-2">
             <%= f.collection_select :task_type_id, TaskType.all, :id, :title, :include_blank => false %>
           </div>
-          <div class="col-lg-4 task-list">
-            <%= task.title %>
+          <div class="col-lg-4">
+            <%= f.text_field :title, :class => "form-control" %>
           </div>
-          <div class="col-lg-4 task-edit">
-            <%= f.text_field :title %>
+          <div class="col-lg-3">
+            <%= f.date_select :deadline, :class => "form-control" %>
           </div>
-          <div class="col-lg-3 task-list">
-            <%= task.deadline %>
-          </div>
-          <div class="col-lg-3 task-edit">
-            <%= f.date_select :deadline %>
-          </div>
-          <div class="col-lg-3 task-list">
-            <button class="edit-button" type="button">Edit</button>
-          </div>
-          <div class="col-lg-3 task-edit">
-            <%= f.submit %>
-            <button class="edit-button" type="button">Cancel</button>
+          <div class="col-lg-3">
+            <%= f.submit 'Save', :class => "save-button btn btn-default" %>
+            <button class="edit-button btn btn-default" type="button">Cancel</button>
           </div>
         <% end %>
       </div>
